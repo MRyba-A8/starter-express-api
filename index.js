@@ -1,6 +1,7 @@
 const express = require('express')
 const axios = require('axios')
 const Bottleneck = require('bottleneck')
+const cors = require('cors')
 const app = express()
 
 const headers = {
@@ -42,6 +43,8 @@ async function getCompanies(companies = [], after = 0) {
         return outputCompanies;
     }
 }
+
+app.use(cors())
 
 app.all('/', async (req, res) => {
     try {
