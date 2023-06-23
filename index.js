@@ -28,13 +28,13 @@ async function getCompanies(companies = [], after = 0) {
     }
     const companyBatch = await axios.post(searchURL, searchBody, { headers: headers });
     console.log(companyBatch);
-    return companyBatch.results;
+    return companyBatch.data.results;
 }
 
 app.all('/', async (req, res) => {
     try {
         const companies = await getCompanies();
-        res.send(companies);
+        res.json(companies);
     } catch (error) {
         console.log(error);
     }
