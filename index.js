@@ -1,11 +1,16 @@
 const express = require('express')
 const axios = require('axios')
+const Bottleneck = require('bottleneck')
 const app = express()
 
 const headers = {
     "content-type": "application/json",
     "authorization": `Bearer ${process.env.HS_KEY}`
 }
+
+const limiter = new Bottleneck({
+    minTime: 333
+});
 
 async function getCompanies(companies = [], after = 0) {
     const searchURL = "https://api.hubapi.com/crm/v3/objects/companies/search";
@@ -29,7 +34,8 @@ async function getCompanies(companies = [], after = 0) {
     const companyBatch = await axios.post(searchURL, searchBody, { headers: headers });
     if ("paging" in companyBatch.data) {
         let addedCompanies = companies.concat(companyBatch.data.results);
-        return await getCompanies(addedCompanies, companyBatch.data.paging.next.after);
+        const limitedRecursion = limiter.wrap(getCompanies)
+        return await limitedRecursion(addedCompanies, companyBatch.data.paging.next.after);
     } else {
         let outputCompanies = companies.concat(companyBatch.data.results);
         return outputCompanies;
