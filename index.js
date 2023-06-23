@@ -30,9 +30,9 @@ async function getCompanies(companies = [], after = 0) {
     return companyBatch;
 }
 
-app.all('/', (req, res) => {
-    console.log("Just got a request!")
-    console.log(req.query["page"])
-    res.send(getCompanies());
+app.all('/', async (req, res) => {
+    res.send(await getCompanies());
+    // console.log("Just got a request!")
+    // console.log(req.query["page"])
 })
 app.listen(process.env.PORT || 3000)
