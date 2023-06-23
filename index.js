@@ -37,7 +37,8 @@ async function getCompanies(companies = [], after = 0) {
         const limitedRecursion = limiter.wrap(getCompanies)
         return await limitedRecursion(addedCompanies, companyBatch.data.paging.next.after);
     } else {
-        let outputCompanies = companies.concat(companyBatch.data.results);
+        let outputCompanyResults = companies.concat(companyBatch.data.results);
+        const outputCompanies = outputCompanyResults.map(({ properties }) => properties.name);
         return outputCompanies;
     }
 }
