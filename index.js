@@ -14,7 +14,7 @@ async function getCompanies(companies = [], after = 0) {
             {
                 "filters": [
                     {
-                        "propertyName": "packback_campus_id",
+                        "propertyName": "packback_campus_id__c",
                         "operator": "HAS_PROPERTY"
                     }
                 ]
@@ -36,7 +36,6 @@ app.all('/', async (req, res) => {
         res.send(companies);
     } catch (error) {
         console.log(error);
-        res.send(error)
     }
     // console.log("Just got a request!")
     // console.log(req.query["page"])
