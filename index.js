@@ -31,7 +31,8 @@ async function getCompanies(companies = [], after = 0) {
 }
 
 app.all('/', async (req, res) => {
-    res.send(await getCompanies());
+    const companies = await getCompanies();
+    res.send(companies);
     // console.log("Just got a request!")
     // console.log(req.query["page"])
 })
