@@ -27,7 +27,8 @@ async function getCompanies(companies = [], after = 0) {
         "after": after
     }
     const companyBatch = await axios.post(searchURL, searchBody, { headers: headers });
-    return companyBatch;
+    console.log(companyBatch);
+    return companyBatch.results;
 }
 
 app.all('/', async (req, res) => {
