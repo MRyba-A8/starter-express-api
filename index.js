@@ -27,8 +27,13 @@ async function getCompanies(companies = [], after = 0) {
         "after": after
     }
     const companyBatch = await axios.post(searchURL, searchBody, { headers: headers });
-    console.log(companyBatch);
-    return companyBatch.data.results;
+    if ("paging" in companyBatch.data) {
+        let addedCompanies = companies.concat(companyBatch.data.results);
+        return await getCompanies(addedCompanies, companyBatch.data.paging.next.after);
+    } else {
+        let outputCompanies = companies.concat(companyBatch.data.results);
+        return outputCompanies;
+    }
 }
 
 app.all('/', async (req, res) => {
