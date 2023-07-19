@@ -3,6 +3,12 @@ const axios = require('axios')
 const Bottleneck = require('bottleneck')
 const cors = require('cors')
 const app = express()
+const AWS = require("aws-sdk")
+const s3 = new AWS.S3()
+const bodyParser = require('body-parser')
+require('dotenv').config();
+
+app.use(bodyParser.json())
 
 const headers = {
     "content-type": "application/json",
@@ -40,20 +46,49 @@ async function getCompanies(companies = [], after = 0) {
     } else {
         let outputCompanyResults = companies.concat(companyBatch.data.results);
         const outputCompanies = outputCompanyResults.map(({ properties }) => properties.name);
-        return outputCompanies;
+        // return outputCompanies;
+        let filename = "companies.json"
+
+        return await s3.putObject({
+            Body: JSON.stringify(outputCompanies),
+            Bucket: process.env.BUCKET,
+            Key: filename,
+        }).promise()
     }
 }
 
 app.use(cors())
 
-app.all('/', async (req, res) => {
+app.get('/companies.json', async (req, res) => {
+    let filename = req.path.slice(1)
+    try {
+        let s3File = await s3.getObject({
+            Bucket: process.env.BUCKET,
+            Key: filename,
+        }).promise()
+
+        res.set('Content-type', "application/json")
+        // const jsonString = await s3File.Body.transformToString()
+        const json = JSON.parse(s3File.Body.toString('utf-8'))
+        res.send(json).end()
+    } catch (error) {
+        if (error.code === 'NoSuchKey') {
+            console.log(`No such key ${filename}`)
+            res.sendStatus(404).end()
+        } else {
+            console.log(error)
+            res.sendStatus(500).end()
+        }
+    }
+})
+
+app.get('/getallcompanies', async (req, res) => {
     try {
         const companies = await getCompanies();
         res.json(companies);
     } catch (error) {
         console.log(error);
     }
-    // console.log("Just got a request!")
-    // console.log(req.query["page"])
 })
+
 app.listen(process.env.PORT || 3000)
