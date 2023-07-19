@@ -6,7 +6,6 @@ const app = express()
 const AWS = require("aws-sdk")
 const s3 = new AWS.S3()
 const bodyParser = require('body-parser')
-require('dotenv').config();
 
 app.use(bodyParser.json())
 
