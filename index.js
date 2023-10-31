@@ -63,7 +63,25 @@ async function getCompanies(companies = [], after = 0) {
 
 async function getAllEvents(after = null) {
     try {
-        const baseUrl = 'https://api.hubapi.com/crm/v3/objects/events';
+        const searchURL = "https://api.hubapi.com/crm/v3/objects/events/search";
+        const searchBody = {
+            "filterGroups": [
+                {
+                    "filters": [
+                        {
+                            "propertyName": "approval_status",
+                            "operator": "EQ",
+                            "value": "Approved"
+                        }
+                    ]
+                }
+            ],
+            "properties": [
+                "name"
+            ],
+            "limit": 100,
+            "after": after
+        }
         const properties = [
             'event_type',
             'city',
@@ -76,6 +94,7 @@ async function getAllEvents(after = null) {
             'event_host',
             'event_cost_options',
             'location_address',
+            'coordinates'
         ];
 
         // Construct the URL with query parameters
@@ -85,7 +104,7 @@ async function getAllEvents(after = null) {
             after: after, // Use this for pagination
         };
 
-        const response = await axios.get(baseUrl, {
+        const response = await axios.post(searchURL, searchBody, {
             params: queryParams,
             headers: {
                 "content-type": "application/json",
