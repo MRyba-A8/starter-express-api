@@ -77,29 +77,25 @@ async function getAllEvents(after = null) {
                 }
             ],
             "properties": [
-                "name"
+                'event_type',
+                'city',
+                'date___time',
+                'start_time',
+                'end_time',
+                'event_name',
+                'description',
+                'event_registration_link',
+                'event_host',
+                'event_cost_options',
+                'location_address',
+                'coordinates'
             ],
             "limit": 100,
             "after": after
         }
-        const properties = [
-            'event_type',
-            'city',
-            'date___time',
-            'start_time',
-            'end_time',
-            'event_name',
-            'description',
-            'event_registration_link',
-            'event_host',
-            'event_cost_options',
-            'location_address',
-            'coordinates'
-        ];
 
         // Construct the URL with query parameters
         const queryParams = {
-            properties: properties.join(','),
             limit: 100, // Adjust the limit as needed
             after: after, // Use this for pagination
         };
